@@ -1174,6 +1174,35 @@ h1 .accent {
   cursor: not-allowed;
 }
 
+.paste-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-paste-clear {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--navy-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 52px;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.btn-paste-clear:hover {
+  border-color: var(--coral);
+  color: var(--white);
+  background: rgba(240, 78, 94, 0.05);
+}
+
+.btn-paste-clear:active {
+  transform: scale(0.98);
+}
+
 /* Hint text */
 .paste-hint {
   font-size: 0.77rem;

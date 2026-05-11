@@ -311,6 +311,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   const pasteForm       = document.getElementById('paste-form');
   const pasteUrl        = document.getElementById('paste-url');
   const pasteSubmitBtn  = document.getElementById('paste-submit-btn');
+  const pasteClearBtn   = document.getElementById('paste-clear-btn');
   const pasteLoading    = document.getElementById('paste-loading');
   const pasteResult     = document.getElementById('paste-result');
   const pasteSaved      = document.getElementById('paste-saved');
@@ -358,6 +359,14 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   }
   function clearError() { hide(pasteError); pasteError.textContent = ''; }
 
+  function updateClearBtnVisibility() {
+    if (pasteUrl.value.trim() || currentCard) {
+      show(pasteClearBtn);
+    } else {
+      hide(pasteClearBtn);
+    }
+  }
+
   function isValidUrl(str) {
     try {
       const u = new URL(str);
@@ -381,6 +390,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     hide(customDateWrap);
     customDateInput.value = '';
     stopLoadingTips();
+    updateClearBtnVisibility();
   }
 
   /* ── Loading tip rotation ── */
@@ -461,6 +471,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       } else {
         setError('⚠️ Sorry, we\'re having trouble on our side right now. Please try again in a moment.');
       }
+    } finally {
+      updateClearBtnVisibility();
     }
   }
 
@@ -475,6 +487,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     }
     await fetchPreview(url);
   });
+
+  /* ── Input listener for Clear button ── */
+  pasteUrl.addEventListener('input', updateClearBtnVisibility);
+
+  /* ── Clear button click ── */
+  pasteClearBtn.addEventListener('click', resetPasteSection);
 
   /* ── Sample chips ── */
   document.querySelectorAll('.sample-chip').forEach(chip => {

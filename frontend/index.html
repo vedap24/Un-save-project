@@ -71,9 +71,14 @@
           <div class="paste-input-row">
             <input type="url" id="paste-url" name="url" placeholder="https://paste-any-link-you-saved.com"
               autocomplete="off" spellcheck="false" aria-label="Paste a URL here" aria-describedby="paste-hint" />
-            <button type="submit" class="btn-paste-submit" id="paste-submit-btn">
-              Preview →
-            </button>
+            <div class="paste-btn-group">
+              <button type="button" class="btn-paste-clear" id="paste-clear-btn" hidden aria-label="Clear input">
+                Clear
+              </button>
+              <button type="submit" class="btn-paste-submit" id="paste-submit-btn">
+                Preview →
+              </button>
+            </div>
           </div>
           <p class="paste-hint" id="paste-hint">
             Works best with public links — blogs, articles, docs, product pages, and most links shared on LinkedIn,
