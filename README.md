@@ -397,7 +397,7 @@ CREATE TABLE waitlist (
 - **Local:** Open `backend/data/unsave.db` with [DB Browser for SQLite](https://sqlitebrowser.org/).
 - **Production:** Go to the Vercel Postgres dashboard and click the **"Browse"** tab, or run `SELECT * FROM waitlist;` in the Query tab.
 
-> **Note on Persistence:** On Vercel, the interactive demo cards (SQLite) are ephemeral and will reset when the server sleeps. The **Waitlist (Postgres)** is fully persistent and safe for production use.
+> **Note on Persistence:** On Vercel, the app uses **in-memory SQLite** for the interactive demo cards to comply with the platform's read-only filesystem. This keeps the landing page fast and crash-free. The **Waitlist (Postgres)** remains fully persistent and is unaffected by server restarts.
 
 ---
 

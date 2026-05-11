@@ -18,13 +18,24 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
 
-const dbPath = process.env.DB_PATH
-  ? path.resolve(process.env.DB_PATH)
-  : path.join(__dirname, "data", "unsave.db");
+const isVercel = process.env.VERCEL === "1" || !!process.env.POSTGRES_URL;
 
-const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+let dbPath;
+
+if (isVercel) {
+  // On Vercel, we use in-memory SQLite for the interactive demo cards.
+  // This prevents the "read-only filesystem" error.
+  // The waitlist itself persists to Vercel Postgres below.
+  dbPath = ":memory:";
+} else {
+  dbPath = process.env.DB_PATH
+    ? path.resolve(process.env.DB_PATH)
+    : path.join(__dirname, "data", "unsave.db");
+
+  const dbDir = path.dirname(dbPath);
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
 }
 
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -32,7 +43,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.error("❌ Could not open database:", err.message);
     process.exit(1);
   }
-  console.log(`✅ Database ready at: ${dbPath}`);
+  console.log(`✅ Database ready (mode: ${isVercel ? "memory" : "file"})`);
 });
 
 const { sql } = require("@vercel/postgres");
