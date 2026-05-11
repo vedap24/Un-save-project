@@ -1,6 +1,6 @@
-# Un{save} — Save later at one place
+# Un{save} — Act on what you saved
 
-> Paste a link. Pick when to act. Stop forgetting what you saved.
+> Stop saving. Start finishing.
 
 ---
 
@@ -356,37 +356,31 @@ node -e "
 
 ---
 
-## Vercel Deployment
-
-Un{save} is configured to deploy to Vercel with one click.
-
-### Steps
-1. Push your code to GitHub (see instructions above).
-2. Go to [vercel.com](https://vercel.com) and click **"Add New"** → **"Project"**.
-3. Import your `unsave` repository.
-4. Click **Deploy**.
-
-### Important: SQLite on Vercel
-Vercel is **serverless**, which means the filesystem is read-only and resets on every request.
-- **Waitlist signups and saved links will NOT be persistent on Vercel.**
-- If you use Vercel for the demo, data will be lost when the server sleeps.
-- **Recommended for production:** Use [Railway.app](https://railway.app) or [Render.com](https://render.com) for persistent SQLite, or move the database to [Turso](https://turso.tech).
-
 ---
 
-## Waitlist Storage (Local vs Production)
+## Deployment & Persistence
 
 Un{save} v1 uses a hybrid database strategy to ensure reliability and persistence:
 
 - **Local Development:** Uses **SQLite** (`backend/data/unsave.db`). No setup required.
 - **Production (Vercel):** Uses **Vercel Postgres** for the waitlist. This ensures your signups are safe even when serverless functions reset.
 
-### Production Setup (Vercel Postgres)
+### Vercel Deployment Steps
 
-1. Go to your **Vercel Dashboard** → **Storage** → **Create Database** → **Postgres**.
-2. Connect the database to your project.
-3. Vercel will automatically add `POSTGRES_URL` and other variables to your Environment Variables.
-4. Go to the **"Query"** tab in the Vercel Postgres dashboard and run this SQL to create your table:
+1. Push your code to GitHub.
+2. Go to [vercel.com](https://vercel.com) and click **"Add New"** → **"Project"**.
+3. Import your `Un-save-project` repository.
+4. **Before clicking Deploy:** Go to the **Storage** tab in your Vercel project, click **Connect Database**, and create a **Postgres** instance.
+5. Vercel will automatically add `POSTGRES_URL` to your Environment Variables.
+6. Click **Deploy**.
+
+### Production Database Setup
+
+Once deployed, you must create the `waitlist` table in your Vercel Postgres dashboard:
+
+1. Go to the **Storage** tab in Vercel → select your Postgres database.
+2. Click the **"Query"** tab.
+3. Run this SQL to create the table:
 
 ```sql
 CREATE TABLE waitlist (
@@ -400,8 +394,10 @@ CREATE TABLE waitlist (
 ```
 
 ### Verifying Signups
-- **Local:** Open `backend/data/unsave.db` with DB Browser for SQLite.
+- **Local:** Open `backend/data/unsave.db` with [DB Browser for SQLite](https://sqlitebrowser.org/).
 - **Production:** Go to the Vercel Postgres dashboard and click the **"Browse"** tab, or run `SELECT * FROM waitlist;` in the Query tab.
+
+> **Note on Persistence:** On Vercel, the interactive demo cards (SQLite) are ephemeral and will reset when the server sleeps. The **Waitlist (Postgres)** is fully persistent and safe for production use.
 
 ---
 
