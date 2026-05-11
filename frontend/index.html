@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Un{save} — Act on what you saved</title>
+  <meta name="description"
+    content="Un{save} helps you do something with things you already saved. Clear your backlog, one decision at a time — no login needed." />
+  <meta property="og:title" content="Un{save} — Act on what you saved" />
+  <meta property="og:description" content="Stop collecting. Start finishing. One saved thing → one real action." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#7B3FF2" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav aria-label="Main navigation">
+    <a href="#" class="nav-logo" aria-label="Un{save} home">Un<span>{save}</span></a>
+    <a href="#waitlist" class="nav-cta" id="nav-join-btn">Join waitlist</a>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <section id="hero" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Act on what you Saved
+      </div>
+
+      <img src="assets/logo.png" alt="Un{save} icon — a pocket with saved content cards" class="hero-logo-img"
+        id="hero-logo" />
+
+      <h1 id="hero-heading">
+        Stop saving.<br><span class="accent">Start finishing.</span>
+      </h1>
+
+      <p class="hero-sub">
+        You save things everywhere. Instagram, X, YouTube, Reddit, many more...<br>
+        <br>
+        Un{save} is the one place you actually
+        <em>do</em> something with what you saved.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#paste-link" class="btn-primary" id="hero-demo-btn">
+          ▶ Try it now
+        </a>
+        <a href="#waitlist" class="btn-ghost" id="hero-waitlist-btn">
+          Get early access
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PASTE LINK ===================== -->
+  <section id="paste-link" aria-labelledby="paste-heading">
+    <div class="container">
+      <p class="section-label">No login · just 20 seconds</p>
+      <h2 class="section-title" id="paste-heading">Paste a link. Decide what to do with it.</h2>
+      <p class="section-sub">
+        Drop any public URL and get a clean card. Then pick
+        <em>when</em> you'll actually act on it.
+      </p>
+
+      <!-- URL input form -->
+      <div class="paste-box" id="paste-box">
+
+        <form id="paste-form" novalidate aria-label="Paste a link to preview it">
+          <div class="paste-input-row">
+            <input type="url" id="paste-url" name="url" placeholder="https://paste-any-link-you-saved.com"
+              autocomplete="off" spellcheck="false" aria-label="Paste a URL here" aria-describedby="paste-hint" />
+            <button type="submit" class="btn-paste-submit" id="paste-submit-btn">
+              Preview →
+            </button>
+          </div>
+          <p class="paste-hint" id="paste-hint">
+            Works best with public links — blogs, articles, docs, product pages, and most links shared on LinkedIn,
+            Slack, X, or Discord.
+          </p>
+        </form>
+
+        <!-- Sample link chips -->
+        <div class="sample-chips" aria-label="Try a sample link">
+          <span class="sample-label">Try with:</span>
+          <button class="sample-chip" id="sample-article"
+            data-url="https://medium.com/the-year-of-the-looking-glass/the-product-death-cycle-6772e15c01b8"
+            aria-label="Try a blog or article link sample">
+            📝 Article
+          </button>
+          <button class="sample-chip" id="sample-product" data-url="https://www.amazon.com/dp/B09JQMJHXY"
+            aria-label="Try a product page sample">
+            🛍️ Product
+          </button>
+          <button class="sample-chip" id="sample-docs" data-url="https://developer.mozilla.org/en-US/docs/Web/API/fetch"
+            aria-label="Try a docs page sample">
+            📄 Docs
+          </button>
+          <button class="sample-chip" id="sample-github" data-url="https://github.com/facebook/react"
+            aria-label="Try a GitHub repo sample">
+            💻 GitHub repo
+          </button>
+        </div>
+
+      </div><!-- /paste-box -->
+
+      <!-- Loading state (hidden by default) -->
+      <div class="paste-loading" id="paste-loading" aria-live="polite" hidden>
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <div class="loading-tips">
+          <p class="loading-head">Fetching preview…</p>
+          <p class="loading-tip" id="loading-tip">
+            Un{save} reads the page's Open Graph metadata — the same data Slack and LinkedIn use for link previews. No
+            images fetched.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card preview result (hidden by default) -->
+      <div class="paste-result" id="paste-result" hidden>
+
+        <!-- Preview card -->
+        <div class="preview-card" id="preview-card" role="article" aria-label="Link preview card">
+          <div class="preview-emoji" id="preview-emoji" aria-hidden="true">🔗</div>
+          <div class="preview-info">
+            <div class="preview-title" id="preview-title">Untitled link</div>
+            <div class="preview-desc" id="preview-desc"></div>
+            <div class="preview-domain" id="preview-domain"></div>
+          </div>
+        </div>
+
+        <!-- Fallback notice (shown only when preview partially failed) -->
+        <p class="paste-fallback-msg" id="paste-fallback-msg" hidden>
+          ℹ️ This link doesn't expose public preview data — it may require login or block automated access. You can
+          still save it as a card.
+        </p>
+
+        <!-- Reminder picker -->
+        <div class="reminder-picker" id="reminder-picker" aria-label="Choose when to act">
+          <p class="reminder-label">When will you actually act on this?</p>
+          <div class="reminder-chips" role="group" aria-label="Timing options">
+            <button class="reminder-chip" data-timing="today" id="remind-today">⚡ Today</button>
+            <button class="reminder-chip" data-timing="tomorrow" id="remind-tomorrow">🌅 Tomorrow</button>
+            <button class="reminder-chip" data-timing="weekend" id="remind-weekend">☀️ Weekend</button>
+            <button class="reminder-chip" data-timing="later" id="remind-later">📦 Someday</button>
+          </div>
+          <!-- Optional custom date (shown when "Someday" is picked) -->
+          <div class="custom-date-wrap" id="custom-date-wrap" hidden>
+            <label for="custom-date" class="custom-date-label">Or pick a date & time:</label>
+            <input type="datetime-local" id="custom-date" name="custom_date" class="custom-date-input" />
+          </div>
+        </div>
+
+        <button class="btn-primary btn-save-link" id="save-link-btn" disabled aria-disabled="true">
+          Lock it in →
+        </button>
+
+        <button class="paste-reset" id="paste-reset-btn">↩ Try a different link</button>
+
+      </div><!-- /paste-result -->
+
+      <!-- Save success state (hidden by default) -->
+      <div class="paste-saved" id="paste-saved" hidden role="status" aria-live="polite">
+        <div class="saved-check" aria-hidden="true">✓</div>
+        <h3 class="saved-title" id="paste-saved-title">Locked in for Today ⚡</h3>
+        <p class="saved-msg">One decision made. That's how the backlog clears.</p>
+        <button class="paste-reset" id="paste-saved-reset">↩ Do another one</button>
+      </div>
+
+      <!-- Error state (hidden by default) -->
+      <p class="paste-error" id="paste-error" role="alert" hidden></p>
+
+    </div>
+  </section>
+
+  <!-- ===================== DEMO ===================== -->
+  <section id="demo" aria-labelledby="demo-heading">
+    <div class="container">
+      <p class="section-label">See the full flow</p>
+      <h2 class="section-title" id="demo-heading">
+        One saved thing. One real decision.
+      </h2>
+      <p class="section-sub">
+        Pick what you saved. Choose what you'll do. Set when. Done.
+      </p>
+
+      <!-- Demo shell -->
+      <div class="demo-shell" role="region" aria-label="Interactive demo">
+
+        <div class="demo-top-bar" aria-hidden="true">
+          <div class="dot-row">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="bar-title">Un{save} — your action queue</span>
+        </div>
+
+        <div class="demo-body">
+
+          <!-- STEP 1: Pick a saved card -->
+          <div class="demo-step active" id="step-1" aria-label="Step 1: Pick a saved item">
+            <p class="step-hint">👇 Pick one thing from your backlog</p>
+            <div class="saved-cards" role="list">
+
+              <div class="saved-card blue" role="listitem" tabindex="0" data-card="0" id="demo-card-0"
+                aria-label="Select: How I built a $5k/month side project">
+                <div class="card-icon blue" aria-hidden="true">🛠️</div>
+                <div class="card-info">
+                  <div class="card-title">How I built a $5k/month side project</div>
+                  <div class="card-source">Saved from X · 3 days ago</div>
+                </div>
+                <div class="card-check" aria-hidden="true"></div>
+              </div>
+
+              <div class="saved-card coral" role="listitem" tabindex="0" data-card="1" id="demo-card-1"
+                aria-label="Select: The best pasta recipe I've seen">
+                <div class="card-icon coral" aria-hidden="true">🍝</div>
+                <div class="card-info">
+                  <div class="card-title">The best pasta recipe I've seen</div>
+                  <div class="card-source">Saved from Instagram · 1 week ago</div>
+                </div>
+                <div class="card-check" aria-hidden="true"></div>
+              </div>
+
+              <div class="saved-card amber" role="listitem" tabindex="0" data-card="2" id="demo-card-2"
+                aria-label="Select: Design systems crash course">
+                <div class="card-icon amber" aria-hidden="true">🎨</div>
+                <div class="card-info">
+                  <div class="card-title">Design systems crash course</div>
+                  <div class="card-source">Saved from YouTube · 2 weeks ago</div>
+                </div>
+                <div class="card-check" aria-hidden="true"></div>
+              </div>
+
+            </div>
+
+            <div class="demo-nav">
+              <span></span>
+              <button class="btn-demo-next" id="step1-next" disabled aria-disabled="true">
+                Think about it →
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Clarity moment -->
+          <div class="demo-step" id="step-2" aria-label="Step 2: Quick clarity check">
+            <p class="step-hint">Take a moment with this one</p>
+
+            <div class="clarity-display" id="clarity-display">
+              <div class="clarity-icon" id="clarity-icon" aria-hidden="true">🛠️</div>
+              <div class="clarity-text">
+                <div class="clarity-title" id="clarity-title">How I built a $5k/month side project</div>
+                <div class="clarity-q">Does this deserve action <em>this week</em>?</div>
+              </div>
+            </div>
+
+            <div class="demo-nav">
+              <button class="btn-demo-back" id="step2-back">← Back</button>
+              <button class="btn-demo-next" id="step2-next">
+                Make my call →
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Decision -->
+          <div class="demo-step" id="step-3" aria-label="Step 3: Make your decision">
+            <p class="step-hint">What's your call on this one?</p>
+            <div class="decision-grid" role="group" aria-label="Decision options">
+
+              <button class="decision-chip" data-decision="now" id="decision-now">
+                <span class="decision-icon">⚡</span>
+                <span class="decision-label">Do it now</span>
+                <span class="decision-desc">Today, before the feed</span>
+              </button>
+
+              <button class="decision-chip" data-decision="schedule" id="decision-schedule">
+                <span class="decision-icon">🗓️</span>
+                <span class="decision-label">Schedule it</span>
+                <span class="decision-desc">Set a real time for it</span>
+              </button>
+
+              <button class="decision-chip" data-decision="keep" id="decision-keep">
+                <span class="decision-icon">📦</span>
+                <span class="decision-label">Keep for later</span>
+                <span class="decision-desc">Not now, not gone</span>
+              </button>
+
+              <button class="decision-chip" data-decision="drop" id="decision-drop">
+                <span class="decision-icon">🗑️</span>
+                <span class="decision-label">Drop it</span>
+                <span class="decision-desc">Clear it. Cleaner queue.</span>
+              </button>
+
+            </div>
+
+            <div class="demo-nav">
+              <button class="btn-demo-back" id="step3-back">← Back</button>
+              <button class="btn-demo-next" id="step3-next" disabled aria-disabled="true">
+                Done ✓
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: Done — message adapts per decision -->
+          <div class="demo-step" id="step-4" aria-label="Step 4: Decision locked in">
+            <div class="done-screen">
+              <div class="done-checkmark" aria-hidden="true">✓</div>
+              <h3 class="done-title" id="done-message">Locked in for Today ⚡</h3>
+              <p class="done-sub" id="done-sub">
+                One saved thing → one real action.<br>
+                That's how the backlog shrinks.
+              </p>
+
+              <div class="streak-bar-wrap" aria-label="Backlog progress">
+                <div class="streak-label">
+                  <span>Backlog cleared</span>
+                  <span id="streak-pct">0%</span>
+                </div>
+                <div class="streak-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div class="streak-bar-fill" id="streak-fill"></div>
+                </div>
+              </div>
+
+              <a href="#waitlist" class="btn-primary" id="demo-cta-btn" style="display:inline-flex;margin-top:8px;">
+                Get early access →
+              </a>
+              <br>
+              <button class="demo-restart" id="demo-restart-btn">↩ Try another</button>
+            </div>
+          </div>
+
+          <!-- Progress dots -->
+          <div class="demo-progress" role="tablist" aria-label="Demo steps">
+            <span class="active" aria-label="Step 1"></span>
+            <span aria-label="Step 2"></span>
+            <span aria-label="Step 3"></span>
+            <span aria-label="Step 4"></span>
+          </div>
+
+        </div><!-- /demo-body -->
+      </div><!-- /demo-shell -->
+    </div>
+  </section>
+
+  <!-- ===================== FOCUS ===================== -->
+  <section id="focus" aria-labelledby="focus-heading">
+    <div class="container">
+      <div class="focus-card">
+        <div class="focus-icon" aria-hidden="true">🎯</div>
+        <h2 id="focus-heading">Finish one saved thing<br>before going back to the feed.</h2>
+        <p>
+          The feed will always have more. Your saved list already has enough.
+          Un{save} helps you close the loop on what you <em>already</em> decided was worth keeping —
+          instead of endlessly adding more.
+        </p>
+        <span class="focus-badge">The Un{scroll} principle</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WAITLIST ===================== -->
+  <section id="waitlist" aria-labelledby="waitlist-heading">
+    <div class="container">
+      <div class="waitlist-box">
+        <p class="section-label">Early access</p>
+        <h2 class="section-title" id="waitlist-heading">Shape what Un{save} becomes</h2>
+        <p class="section-sub">
+          Early users help us build the right version. Join before it fills up.
+        </p>
+
+        <!-- Form -->
+        <form id="waitlist-form" novalidate aria-label="Waitlist signup form">
+
+          <div class="form-group">
+            <label for="wl-email">Email address <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="wl-email" name="email" placeholder="you@example.com" autocomplete="email" required
+              aria-required="true" aria-describedby="email-error" />
+            <p class="form-error" id="email-error" role="alert"></p>
+          </div>
+
+          <div class="form-group">
+            <label for="wl-name">Your name <span
+                style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+            <input type="text" id="wl-name" name="name" placeholder="First name or full name" autocomplete="name" />
+          </div>
+
+          <div class="form-group">
+            <label for="wl-saves">What do you save most? <span
+                style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+            <select id="wl-saves" name="saves_most">
+              <option value="">— pick one —</option>
+              <option value="recipes">Recipes 🍳</option>
+              <option value="articles">Articles &amp; reads 📖</option>
+              <option value="videos">Videos 🎬</option>
+              <option value="products">Products to buy 🛒</option>
+              <option value="side-hustle">Side hustle ideas 💡</option>
+              <option value="tutorials">Tutorials &amp; courses 📚</option>
+              <option value="random">Random stuff 😅</option>
+            </select>
+          </div>
+
+          <!-- Hidden source tracking -->
+          <input type="hidden" id="wl-source" name="source" value="direct" />
+
+          <button type="submit" class="btn-waitlist" id="waitlist-submit-btn">
+            Get early access →
+          </button>
+
+          <p class="waitlist-note">No spam. Just product updates. Unsubscribe anytime.</p>
+        </form>
+
+        <!-- Success state (hidden initially) -->
+        <div class="waitlist-success" id="waitlist-success" role="status" aria-live="polite">
+          <div class="success-emoji" aria-hidden="true">🎉</div>
+          <h3 class="success-title">You're on the list!</h3>
+          <p class="success-msg" id="success-msg">
+            We'll reach out when Un{save} opens up.<br>
+            You'll be among the first to try it.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer role="contentinfo">
+    <p>
+      © 2026 Un{save} · Built with ❤️
+    </p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+
+</html>

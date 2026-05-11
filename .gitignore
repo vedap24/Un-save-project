@@ -1,0 +1,6 @@
+node_modules/
+backend/data/unsave.db
+.env
+*.log
+.DS_Store
+.vercel/
